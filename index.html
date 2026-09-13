@@ -928,5 +928,44 @@
             document.getElementById(sectionId).classList.remove('hidden');
         }
     </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<script>
+  const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSk6n1aJri0spvubGr-Oj80T7ItQSjtjoVBUJXEFjJ9jQRk9uzrgFevD5WKCuADVdfkrfhgA9Zi3z9w/pub?output=csv';
+
+  PapaParse.parse(sheetUrl, {
+    download: true,
+    header: true,
+    complete: function(results) {
+      const data = results.data;
+      const tableBody = document.querySelector("#performanceSection tbody");
+      if(!tableBody) return;
+      tableBody.innerHTML = "";
+
+      data.forEach(item => {
+        if(!item.serial) return;
+        const row = `
+          <tr>
+            <td class="p-2 border-r">${item.serial}</td>
+            <td class="p-2 border-r">${item.date}</td>
+            <td class="p-2 border-r text-left font-medium">${item.examName}</td>
+            <td class="p-2 border-r">${item.platform}</td>
+            <td class="p-2 border-r">${item.mcq}</td>
+            <td class="p-2 border-r">${item.written}</td>
+            <td class="p-2 border-r">${item.deduction}</td>
+            <td class="p-2 border-r">${item.total}</td>
+            <td class="p-2 border-r">${item.highest}</td>
+            <td class="p-2 border-r">${item.branchMerit}</td>
+            <td class="p-2 border-r">${item.centralMerit}</td>
+            <td class="p-2 space-y-1">
+              ${item.viewResult === 'true' ? `<button class="bg-[#849200] text-white px-2 py-1 rounded text-[11px] w-full">View Result</button>` : ''}
+              ${item.viewQuestion === 'true' ? `<button class="bg-[#4a1d4a] text-white px-2 py-1 rounded text-[11px] w-full">View Question</button>` : ''}
+            </td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+    }
+  });
+</script>
 </body>
 </html>
